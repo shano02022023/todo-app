@@ -1,28 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { Items } from "../types/items";
-import { XCircleIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon, PencilIcon, StarIcon } from "@heroicons/react/24/solid";
 
 interface TaskListProps {
   container: { id: number; title: string; items: Items[] };
-  containers: Container[];
-  setContainer: React.Dispatch<React.SetStateAction<Container[]>>;
 }
 
-export default function TaskList({
-  container,
-  setContainer,
-  containers,
-}: TaskListProps) {
+export default function TaskList({ container }: TaskListProps) {
   const [showInput, setShowInput] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [showSelectedTasksId, setShowSelectedTasksId] = useState<number | null>(
     null
   );
-  const [isEditingContainer, setIsEditingContainer] = useState(false);
-  const [containerTitle, setContainerTitle] = useState(container.title);
+  const [isFavoriteTask, setIsFavoriteTask] = useState(false);
 
-  const [tasks, setNewTask] = useState<Items[]>(container.items);
+  // const [isEditingContainer, setIsEditingContainer] = useState(false);
+  // const [containerTitle, setContainerTitle] = useState(container.title);
+
+  const [tasks, setTask] = useState<Items[]>(container.items);
 
   const saveTask = (id: number) => {
     if (id !== 0) {
@@ -33,7 +29,7 @@ export default function TaskList({
         return task;
       });
 
-      setNewTask(updatedTasks);
+      setTask(updatedTasks);
     } else {
       const newTask: Items = {
         id: tasks.length + 1,
@@ -41,20 +37,13 @@ export default function TaskList({
         description: taskDescription,
       };
 
-      setNewTask([...tasks, newTask]);
+      setTask([...tasks, newTask]);
     }
 
     setTaskTitle("");
     setTaskDescription("");
     setShowSelectedTasksId(null);
     setShowInput(false);
-  };
-
-  const deleteContainer = (id: number) => () => {
-    const updatedContainers = containers.filter(
-      (container) => container.id !== id
-    );
-    setContainer(updatedContainers);
   };
 
   const showTaskOption = (id: number) => {
@@ -72,7 +61,7 @@ export default function TaskList({
 
   const deleteTasks = (task_id: number) => {
     const updatedTasks = tasks.filter((task) => task.id !== task_id);
-    setNewTask(updatedTasks);
+    setTask(updatedTasks);
   };
 
   const closeInputForm = () => {
@@ -82,76 +71,56 @@ export default function TaskList({
     setTaskTitle("");
   };
 
-  const openInputContainerEditForm = () => {
-    setIsEditingContainer(!isEditingContainer);
-    setContainerTitle(container.title);
+  const addToFavorites = (id: number) => {
+    setTask((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, isFavorite: !task.isFavorite } : task
+      )
+    );
   };
 
-  const taskListRef = useRef<HTMLDivElement | null>(null);
+  // const openInputContainerEditForm = () => {
+  //   setIsEditingContainer(!isEditingContainer);
+  //   setContainerTitle(container.title);
+  // };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      taskListRef.current &&
-      !taskListRef.current.contains(event.target as Node)
-    ) {
-      setIsEditingContainer(false);
-      const updateContainerTitle = containers.map((container) => {
-        if (container.id === container.id) {
-          console.log(container);
-          return { ...container, title: containerTitle };
-        }
-        return container;
-      });
+  // const taskListRef = useRef<HTMLDivElement | null>(null);
 
-      setContainer(updateContainerTitle);
-    }
-  };
+  // const handleClickOutside = (event: MouseEvent) => {
+  //   if (
+  //     taskListRef.current &&
+  //     !taskListRef.current.contains(event.target as Node)
+  //   ) {
+  //     setIsEditingContainer(false);
+  //     const updateContainerTitle = containers.map((container) => {
+  //       if (container.id === container.id) {
+  //         console.log(container);
+  //         return { ...container, title: containerTitle };
+  //       }
+  //       return container;
+  //     });
 
-  useEffect(() => {
-    if (isEditingContainer) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+  //     setContainer(updateContainerTitle);
+  //   }
+  // };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isEditingContainer]);
+  // useEffect(() => {
+  //   if (isEditingContainer) {
+  //     document.addEventListener("mousedown", handleClickOutside);
+  //   } else {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   }
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [isEditingContainer]);
 
   return (
     <div
-      ref={taskListRef}
-      className="w-72 bg-white shadow-lg rounded-lg p-4 flex flex-col"
+    // ref={taskListRef}
+    // className="w-72 bg-white shadow-lg rounded-lg p-4 flex flex-col"
     >
-      {/* List Title */}
-      <div className="flex flex-row justify-between items-between pb-5">
-        <div>
-          {isEditingContainer ? (
-            <input
-              value={containerTitle}
-              onChange={(e) => setContainerTitle(e.target.value)}
-              type="text"
-              placeholder="Title"
-              className="input input-bordered w-full text-sm p-2 rounded-md"
-            />
-          ) : (
-            <h2
-              onClick={() => openInputContainerEditForm()}
-              className="font-bold text-lg text-gray-800 mb-3"
-            >
-              {container.title}
-            </h2>
-          )}
-        </div>
-        <button
-          className="text-red-700"
-          onClick={deleteContainer(container.id)}
-        >
-          <XCircleIcon className="w-7 h-7" />
-        </button>
-      </div>
-
       {/* Task Cards */}
       <ul className="flex flex-col gap-3">
         {tasks.map((task) => (
@@ -160,34 +129,36 @@ export default function TaskList({
               {/* Show task details only when the task is selected for editing */}
               {showSelectedTasksId === task.id ? (
                 <div className="mt-3 flex flex-col gap-5 bg-gray-300 rounded-xl p-5">
-                  <span className="text-black">Edit task</span>
-                  <input
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)}
-                    type="text"
-                    placeholder="Title"
-                    className="input input-bordered w-full text-sm p-2 rounded-md"
-                  />
-                  <textarea
-                    value={taskDescription}
-                    onChange={(e) => setTaskDescription(e.target.value)}
-                    className="textarea w-full text-sm p-2 rounded-md"
-                    placeholder="Description"
-                  ></textarea>
-                  <div className="flex flex-wrap w-full">
-                    <button
-                      className="btn btn-primary w-full mt-2 text-sm"
-                      onClick={() => saveTask(task.id)}
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      className="btn btn-error w-full mt-2 text-sm"
-                      onClick={() => closeInputForm()}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  <form onSubmit={() => saveTask(task.id)}>
+                    <span className="text-black">Edit task</span>
+                    <input
+                      value={taskTitle}
+                      onChange={(e) => setTaskTitle(e.target.value)}
+                      type="text"
+                      placeholder="Title"
+                      className="input input-bordered w-full text-sm p-2 rounded-md"
+                    />
+                    <textarea
+                      value={taskDescription}
+                      onChange={(e) => setTaskDescription(e.target.value)}
+                      className="textarea w-full text-sm p-2 rounded-md"
+                      placeholder="Description"
+                    ></textarea>
+                    <div className="flex flex-wrap w-full">
+                      <button
+                        className="btn btn-primary w-full mt-2 text-sm"
+                        type="submit"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        className="btn btn-error w-full mt-2 text-sm"
+                        onClick={() => closeInputForm()}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 </div>
               ) : (
                 <div>
@@ -196,6 +167,14 @@ export default function TaskList({
                       {task.title}
                     </h6>
                     <div className="flex flex-row gap-2">
+                      <button
+                        onClick={() => addToFavorites(task.id)}
+                        className={
+                          task.isFavorite ? "text-yellow-400" : "text-gray-600"
+                        }
+                      >
+                        <StarIcon className="w-5 h-5" />
+                      </button>
                       <button
                         onClick={() => showTaskOption(task.id)}
                         className="text-black"
