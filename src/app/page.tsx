@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, act } from "react";
 import Container from "./components/Container";
 import { ContainerProps } from "../app/types/container";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
@@ -120,6 +120,11 @@ export default function Home() {
   };
 
   const deleteContainer = (id: number) => () => {
+    // Delete all tasks in the container
+    const updatedTasks = tasks.filter((task) => task.container_id !== id);
+    setTask(updatedTasks);
+
+    // Delete the container
     const updatedContainers = containers.filter(
       (container) => container.id !== id
     );
@@ -160,49 +165,76 @@ export default function Home() {
 
     if (activeCard == null || activeCard == undefined) return;
 
-    const taskToMove = tasks.find((task) => task.id === activeCard);
+    const taskToMove = tasks[activeCard];
 
-    if (taskToMove) {
-      const updatedTasks = tasks.map((task) =>
-        task.id === activeCard ? { ...task, container_id: container_id } : task
-      );
+    // Remove it from the current position
+    const updatedTasks = tasks.filter((task, index) => index !== activeCard);
 
-      setTask(updatedTasks);
+    if (activeCard < position) {
+      // Insert it at the new position
+      updatedTasks.splice(position - 1, 0, {
+        ...taskToMove,
+        container_id: container_id,
+      });
+    } else {
+      updatedTasks.splice(position, 0, {
+        ...taskToMove,
+        container_id: container_id,
+      });
     }
 
+    // Update the state with the reordered containers
+    setTask(updatedTasks);
+
     setActiveCard(null);
+
+    console.log(updatedTasks);
   };
 
   const onDropContainer = (position: number) => {
-
     if (draggableType !== "container") return;
     if (activeContainer == null || activeContainer == undefined) return;
 
-    // Find the index of the container to move
-    const currentIndex = containers.findIndex(
-      (container) => container.id === activeContainer
-    );
-    if (currentIndex === -1) return; // If not found, exit
-
     // Extract the container to move
-    const containerToMove = containers[currentIndex];
+    const containerToMove = containers[activeContainer];
 
     // Remove it from the current position
-    const updatedContainers = [...containers];
-    updatedContainers.splice(currentIndex, 1);
+    const updatedContainers = containers.filter(
+      (container, index) => index !== activeContainer
+    );
 
-    // Insert it at the new position
-    updatedContainers.splice(position, 0, containerToMove);
+    if (activeContainer < position) {
+      updatedContainers.splice(position - 1, 0, {
+        ...containerToMove,
+      });
+    } else {
+      updatedContainers.splice(position, 0, {
+        ...containerToMove,
+      });
+    }
 
     // Update the state with the reordered containers
     setContainer(updatedContainers);
 
-    console.log(updatedContainers);
+    // Update the indices of tasks within the containers
+    const updatedTasks = tasks.map((task) => {
+      const newContainerIndex = updatedContainers.findIndex(
+        (c) => c.id === task.container_id
+      );
+      return { ...task, index: newContainerIndex };
+    });
+
+    setTask(updatedTasks);
+
+    console.log("Updated Containers:", updatedContainers);
+    console.log("Updated Tasks:", updatedTasks);
   };
 
   return (
-    <div className="h-full bg-gray-100 p-6 w-full">
-      <h1 className="font-bold text-gray-900 text-3xl mb-6">Todo app</h1>
+    <div className="h-full bg-gray-100 p-6 w-full dark:bg-gray-700 rounded-xl">
+      <h1 className="font-bold text-gray-900 text-3xl mb-6 dark:text-gray-200">
+        Custom Board
+      </h1>
       {/* Board Container - Horizontally scrollable */}
       <div
         ref={containerListRef}
@@ -218,7 +250,7 @@ export default function Home() {
           <React.Fragment key={index}>
             <div
               onDragStart={() => {
-                setActiveContainer(container.id);
+                setActiveContainer(index);
                 setDraggableType("container");
               }}
               onDragEnd={() => {
@@ -228,23 +260,23 @@ export default function Home() {
               draggable
               className="w-max bg-white shadow-lg rounded-lg p-4 hover:cursor-grab"
             >
-              <div className="flex flex-row justify-between items-between pb-5 w-11/12">
+              <div className="flex flex-row justify-between items-between pb-2 w-60">
                 <div className="flex items-center gap-2 w-11/12">
                   {/* Drag Handle (Optional: Only This is Draggable) */}
                   <div
-                    className="cursor-grab hover:bg-gray-200 p-1 rounded-md"
+                    className="cursor-grab hover:bg-gray-200 rounded-md"
                     onMouseDown={(e) => e.stopPropagation()}
                     draggable
                   ></div>
                   {isEditingContainer && container.id == selectedContainerId ? (
-                    <div className="w-60 flex flex-row items-between justify-between">
+                    <div className="w-full flex flex-row items-between justify-between">
                       <div>
                         <input
                           value={container_title}
                           onChange={(e) => setContainerTitle(e.target.value)}
                           type="text"
                           placeholder="Title"
-                          className="input input-bordered w-full text-sm p-2 rounded-md z-10"
+                          className="input input-bordered w-full text-sm p-2 rounded-md z-50"
                         />
                       </div>
                       <div>
@@ -309,7 +341,7 @@ export default function Home() {
                 onChange={(e) => setContainerTitle(e.target.value)}
                 type="text"
                 placeholder="New list"
-                className="input input-bordered w-full text-sm p-2 rounded-md"
+                className="input input-bordered w-full text-sm p-2 rounded-md z-50"
               />
               <div className="flex flex-wrap w-full">
                 <button

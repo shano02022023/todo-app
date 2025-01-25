@@ -139,10 +139,13 @@ export default function Container({
       {/* Task Cards */}
 
       <ul className="flex flex-col gap-3 bg-gray-100 p-2 w-60">
-        <DropArea onDrop={() => {onDrop(container_id, 0)}} draggableType={draggableType}/>
-        {tasks
-          .filter((task) => task.container_id === container_id) // Filter tasks based on container_id
-          .map((task, index) => (
+        <DropArea
+          onDrop={() => {
+            onDrop(container_id, 0);
+          }}
+          draggableType={draggableType}
+        />
+        {tasks.map((task, index) => container_id === task.container_id &&  (
             <React.Fragment key={index}>
               <SingleTask
                 activeCard={activeCard}
@@ -160,8 +163,14 @@ export default function Container({
                 setTaskTitle={setTaskTitle}
                 taskDescription={taskDescription}
                 setTaskDescription={setTaskDescription}
+                index={index}
               />
-              <DropArea onDrop={() => {onDrop(container_id, index + 1)}} draggableType={draggableType}/>
+              <DropArea
+                onDrop={() => {
+                  onDrop(container_id, index + 1);
+                }}
+                draggableType={draggableType}
+              />
             </React.Fragment>
           ))}
       </ul>

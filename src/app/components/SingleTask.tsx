@@ -23,6 +23,7 @@ interface SingleTaskProps {
   setTaskTitle: (title: string) => void;
   taskDescription: string;
   setTaskDescription: (description: string) => void;
+  index: number;
 }
 
 export default function SingleTask({
@@ -40,6 +41,7 @@ export default function SingleTask({
   setTaskTitle,
   taskDescription,
   setTaskDescription,
+  index
 }: SingleTaskProps) {
   return (
     <li
@@ -50,7 +52,7 @@ export default function SingleTask({
       }
       draggable
       onDrag={() => {
-        setActiveCard(taskProps.id), setDraggableType("task");
+        setActiveCard(index), setDraggableType("task");
       }}
       onDragEnd={() => {
         setActiveCard(null), setDraggableType(null);
