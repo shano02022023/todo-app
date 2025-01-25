@@ -4,9 +4,8 @@ import React, { useState, useEffect, useRef, act } from "react";
 import Container from "./components/Container";
 import { ContainerProps } from "../app/types/container";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { Items } from "../app/types/items";
+import { ItemsProps } from "../app/types/items";
 import ContainerDropArea from "./components/container_drop_area";
-import { on } from "events";
 
 export default function Home() {
   const [showInput, setShowInput] = useState(false);
@@ -18,7 +17,7 @@ export default function Home() {
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [activeContainer, setActiveContainer] = useState<number | null>(null);
   const [draggableType, setDraggableType] = useState<string | null>(null);
-  const [tasks, setTask] = useState<Items[]>([
+  const [tasks, setTask] = useState<ItemsProps[]>([
     {
       id: 1,
       title: "Task 1",

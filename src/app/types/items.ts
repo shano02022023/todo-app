@@ -1,4 +1,4 @@
-interface ItemsProps {
+export interface ItemsProps {
     id: number;
     title: string;
     description: string;
