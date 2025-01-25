@@ -1,24 +1,38 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Items } from "../types/items";
-import { XCircleIcon, PencilIcon, StarIcon } from "@heroicons/react/24/solid";
+import SingleTask from "./SingleTask";
+import DropArea from "./drop_area";
 
-interface TaskListProps {
-  container: { id: number; title: string; items: Items[] };
+interface ContainerProps {
+  tasks: Items[];
+  setTasks: React.Dispatch<React.SetStateAction<Items[]>>;
+  container_id: number;
+  setActiveCard: React.Dispatch<React.SetStateAction<number | null>>;
+  activeCard: number | null;
+  onDrop: (container_id: number, position: number) => void;
+  setDraggableType: React.Dispatch<React.SetStateAction<string | null>>;
+  draggableType: string | null;
 }
 
-export default function TaskList({ container }: TaskListProps) {
+export default function Container({
+  tasks,
+  setTasks,
+  container_id,
+  setActiveCard,
+  activeCard,
+  onDrop,
+  draggableType,
+  setDraggableType,
+}: ContainerProps) {
   const [showInput, setShowInput] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [showSelectedTasksId, setShowSelectedTasksId] = useState<number | null>(
     null
   );
-  const [isFavoriteTask, setIsFavoriteTask] = useState(false);
 
   // const [isEditingContainer, setIsEditingContainer] = useState(false);
   // const [containerTitle, setContainerTitle] = useState(container.title);
-
-  const [tasks, setTask] = useState<Items[]>(container.items);
 
   const saveTask = (id: number) => {
     if (id !== 0) {
@@ -29,15 +43,16 @@ export default function TaskList({ container }: TaskListProps) {
         return task;
       });
 
-      setTask(updatedTasks);
+      setTasks(updatedTasks);
     } else {
       const newTask: Items = {
         id: tasks.length + 1,
         title: taskTitle,
         description: taskDescription,
+        container_id: container_id,
       };
 
-      setTask([...tasks, newTask]);
+      setTasks([...tasks, newTask]);
     }
 
     setTaskTitle("");
@@ -61,7 +76,7 @@ export default function TaskList({ container }: TaskListProps) {
 
   const deleteTasks = (task_id: number) => {
     const updatedTasks = tasks.filter((task) => task.id !== task_id);
-    setTask(updatedTasks);
+    setTasks(updatedTasks);
   };
 
   const closeInputForm = () => {
@@ -72,7 +87,7 @@ export default function TaskList({ container }: TaskListProps) {
   };
 
   const addToFavorites = (id: number) => {
-    setTask((prevTasks) =>
+    setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === id ? { ...task, isFavorite: !task.isFavorite } : task
       )
@@ -122,79 +137,33 @@ export default function TaskList({ container }: TaskListProps) {
     // className="w-72 bg-white shadow-lg rounded-lg p-4 flex flex-col"
     >
       {/* Task Cards */}
-      <ul className="flex flex-col gap-3">
-        {tasks.map((task) => (
-          <li key={task.id} className="bg-gray-200 p-3 rounded-lg shadow-md">
-            <div>
-              {/* Show task details only when the task is selected for editing */}
-              {showSelectedTasksId === task.id ? (
-                <div className="mt-3 flex flex-col gap-5 bg-gray-300 rounded-xl p-5">
-                  <form onSubmit={() => saveTask(task.id)}>
-                    <span className="text-black">Edit task</span>
-                    <input
-                      value={taskTitle}
-                      onChange={(e) => setTaskTitle(e.target.value)}
-                      type="text"
-                      placeholder="Title"
-                      className="input input-bordered w-full text-sm p-2 rounded-md"
-                    />
-                    <textarea
-                      value={taskDescription}
-                      onChange={(e) => setTaskDescription(e.target.value)}
-                      className="textarea w-full text-sm p-2 rounded-md"
-                      placeholder="Description"
-                    ></textarea>
-                    <div className="flex flex-wrap w-full">
-                      <button
-                        className="btn btn-primary w-full mt-2 text-sm"
-                        type="submit"
-                      >
-                        Save Changes
-                      </button>
-                      <button
-                        className="btn btn-error w-full mt-2 text-sm"
-                        onClick={() => closeInputForm()}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex flex-row items-between justify-between">
-                    <h6 className="font-bold text-sm text-gray-900">
-                      {task.title}
-                    </h6>
-                    <div className="flex flex-row gap-2">
-                      <button
-                        onClick={() => addToFavorites(task.id)}
-                        className={
-                          task.isFavorite ? "text-yellow-400" : "text-gray-600"
-                        }
-                      >
-                        <StarIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => showTaskOption(task.id)}
-                        className="text-black"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        className="text-red-700"
-                        onClick={() => deleteTasks(task.id)}
-                      >
-                        <XCircleIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-700">{task.description}</p>
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
+
+      <ul className="flex flex-col gap-3 bg-gray-100 p-2 w-60">
+        <DropArea onDrop={() => {onDrop(container_id, 0)}} draggableType={draggableType}/>
+        {tasks
+          .filter((task) => task.container_id === container_id) // Filter tasks based on container_id
+          .map((task, index) => (
+            <React.Fragment key={index}>
+              <SingleTask
+                activeCard={activeCard}
+                taskProps={task}
+                showSelectedTasksId={showSelectedTasksId}
+                saveTask={saveTask}
+                closeInputForm={closeInputForm}
+                addToFavorites={addToFavorites}
+                deleteTasks={deleteTasks}
+                showTaskOption={showTaskOption}
+                setActiveCard={setActiveCard}
+                draggableType={draggableType}
+                setDraggableType={setDraggableType}
+                taskTitle={taskTitle}
+                setTaskTitle={setTaskTitle}
+                taskDescription={taskDescription}
+                setTaskDescription={setTaskDescription}
+              />
+              <DropArea onDrop={() => {onDrop(container_id, index + 1)}} draggableType={draggableType}/>
+            </React.Fragment>
+          ))}
       </ul>
 
       {/* Add Task Input - Hidden Initially */}
