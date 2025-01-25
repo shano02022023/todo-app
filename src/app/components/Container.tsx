@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Items } from "../types/items";
+import { ItemsProps } from "../types/items";
 import SingleTask from "./SingleTask";
 import DropArea from "./drop_area";
 
 interface ContainerProps {
-  tasks: Items[];
-  setTasks: React.Dispatch<React.SetStateAction<Items[]>>;
+  tasks: ItemsProps[];
+  setTasks: React.Dispatch<React.SetStateAction<ItemsProps[]>>;
   container_id: number;
   setActiveCard: React.Dispatch<React.SetStateAction<number | null>>;
   activeCard: number | null;
@@ -45,11 +45,12 @@ export default function Container({
 
       setTasks(updatedTasks);
     } else {
-      const newTask: Items = {
+      const newTask: ItemsProps = {
         id: tasks.length + 1,
         title: taskTitle,
         description: taskDescription,
         container_id: container_id,
+        isFavorite: false,
       };
 
       setTasks([...tasks, newTask]);

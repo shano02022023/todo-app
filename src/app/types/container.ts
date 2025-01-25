@@ -1,4 +1,4 @@
-interface ContainerProps {
+export interface ContainerProps {
     id: number;
     title: string;
   }
