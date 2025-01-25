@@ -1,5 +1,4 @@
-interface Container {
+interface ContainerProps {
     id: number;
     title: string;
-    items: Items[];
   }
