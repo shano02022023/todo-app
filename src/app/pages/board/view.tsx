@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Container from "./components/Container";
-import { ContainerProps } from "../app/types/container";
+import Container from "../../components/Container";
+import { ContainerProps } from "../../../app/types/container";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { ItemsProps } from "../app/types/items";
-import { BoardsProps } from "../app/types/boards";
-import ContainerDropArea from "./components/container_drop_area";
+import { ItemsProps } from "../../../app/types/items";
+import { BoardsProps } from "../../../app/types/boards";
+import ContainerDropArea from "../../components/container_drop_area";
 
-export default function Home() {
+const ViewBoard = () => {
   const [showInput, setShowInput] = useState(false);
   const [container_title, setContainerTitle] = useState("");
   const [isEditingContainer, setIsEditingContainer] = useState(false);
@@ -22,12 +22,12 @@ export default function Home() {
   const [boards, setBoards] = useState<BoardsProps[]>([
     {
       id: 1,
-      name: "Board 1"
+      name: "Board 1",
     },
     {
       id: 2,
-      name: "Board 2"
-    }
+      name: "Board 2",
+    },
   ]);
 
   const [containers, setContainer] = useState<ContainerProps[]>([
@@ -389,4 +389,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default ViewBoard;

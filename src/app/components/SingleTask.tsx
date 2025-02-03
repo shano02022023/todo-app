@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { XCircleIcon, PencilIcon, StarIcon } from "@heroicons/react/24/solid";
 
 interface SingleTaskProps {
