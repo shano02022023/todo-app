@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "title": "Task 1",
+        "description": "Description 1",
+        "isFavorite": true,
+        "container_id": 1
+    },
+    {
+        "id": 2,
+        "title": "Task 2",
+        "description": "Description 2",
+        "isFavorite": false,
+        "container_id": 1
+    },
+    {
+        "id": 3,
+        "title": "Task 3",
+        "description": "Description 3",
+        "isFavorite": true,
+        "container_id": 2
+    },
+    {
+        "id": 4,
+        "title": "Task 4",
+        "description": "Description 4",
+        "isFavorite": true,
+        "container_id": 2
+    },
+    {
+        "id": 5,
+        "title": "Task 5",
+        "description": "Description 5",
+        "isFavorite": true,
+        "container_id": 3
+    },
+    {
+        "id": 6,
+        "title": "Task 6",
+        "description": "Description 6",
+        "isFavorite": false,
+        "container_id": 3
+    }
+]

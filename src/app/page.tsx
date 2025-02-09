@@ -6,7 +6,10 @@ import { ContainerProps } from "../app/types/container";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { ItemsProps } from "../app/types/items";
 import { BoardsProps } from "../app/types/boards";
-import ContainerDropArea from "./components/container_drop_area";
+import Layout from "./layouts/Layout";
+import tasksData from "./data/Tasks.json";
+import containerData from "./data/Containers.json"
+import boardsData from "./data/Boards.json"
 
 export default function Home() {
   const [showInput, setShowInput] = useState(false);
@@ -19,79 +22,11 @@ export default function Home() {
   const [activeContainer, setActiveContainer] = useState<number | null>(null);
   const [draggableType, setDraggableType] = useState<string | null>(null);
 
-  const [boards, setBoards] = useState<BoardsProps[]>([
-    {
-      id: 1,
-      name: "Board 1"
-    },
-    {
-      id: 2,
-      name: "Board 2"
-    }
-  ]);
+  const [boards, setBoards] = useState<BoardsProps[]>(boardsData);
 
-  const [containers, setContainer] = useState<ContainerProps[]>([
-    {
-      id: 1,
-      board_id: 1,
-      title: "Todo",
-    },
-    {
-      id: 2,
-      board_id: 1,
-      title: "In Progress",
-    },
-    {
-      id: 3,
-      board_id: 1,
-      title: "Done",
-    },
-  ]);
+  const [containers, setContainer] = useState<ContainerProps[]>(containerData);
 
-  const [tasks, setTask] = useState<ItemsProps[]>([
-    {
-      id: 1,
-      title: "Task 1",
-      description: "Description 1",
-      isFavorite: true,
-      container_id: 1,
-    },
-    {
-      id: 2,
-      title: "Task 2",
-      description: "Description 2",
-      isFavorite: false,
-      container_id: 1,
-    },
-    {
-      id: 3,
-      title: "Task 3",
-      description: "Description 3",
-      isFavorite: true,
-      container_id: 2,
-    },
-    {
-      id: 4,
-      title: "Task 4",
-      description: "Description 4",
-      isFavorite: true,
-      container_id: 2,
-    },
-    {
-      id: 5,
-      title: "Task 5",
-      description: "Description 5",
-      isFavorite: true,
-      container_id: 3,
-    },
-    {
-      id: 6,
-      title: "Task 6",
-      description: "Description 6",
-      isFavorite: false,
-      container_id: 3,
-    },
-  ]);
+  const [tasks, setTask] = useState<ItemsProps[]>(tasksData);
 
   const saveContainer = (container_id: number | null) => {
     if (container_id !== null && container_id !== 0) {
@@ -247,146 +182,13 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1 className="font-bold text-gray-900 text-3xl mb-6 dark:text-gray-200">
-        Custom Board
-      </h1>
-      {/* Board Container - Horizontally scrollable */}
-      <div
-        ref={containerListRef}
-        className="bg-gray-300 flex flex-row gap-5 p-4 items-start overflow-scroll h-5/6"
-      >
-        <ContainerDropArea
-          onDrop={() => {
-            onDropContainer(0);
-          }}
-          draggableType={draggableType}
-        />
-        {containers.map((container: ContainerProps, index: number) => (
-          <React.Fragment key={index}>
-            <div
-              onDragStart={() => {
-                setActiveContainer(index);
-                setDraggableType("container");
-              }}
-              onDragEnd={() => {
-                setActiveContainer(null);
-                setDraggableType(null);
-              }}
-              draggable
-              className="bg-white shadow-lg rounded-lg p-4 hover:cursor-grab"
-            >
-              <div className="flex flex-row justify-between items-between pb-2">
-                <div className="flex items-center gap-2">
-                  {/* Drag Handle (Optional: Only This is Draggable) */}
-                  <div
-                    className="cursor-grab hover:bg-gray-200 rounded-md"
-                    onMouseDown={(e) => e.stopPropagation()}
-                    draggable
-                  ></div>
-                  {isEditingContainer && container.id == selectedContainerId ? (
-                    <div className="w-full flex flex-row items-between justify-between">
-                      <div>
-                        <input
-                          value={container_title}
-                          onChange={(e) => setContainerTitle(e.target.value)}
-                          type="text"
-                          placeholder="Title"
-                          className="input input-bordered w-full text-sm p-2 rounded-md z-50"
-                        />
-                      </div>
-                      <div>
-                        <button
-                          onClick={() => saveContainer(container.id)}
-                          className="text-green-700"
-                        >
-                          <CheckCircleIcon className="w-7 h-7" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <h2
-                      onClick={() => openInputContainerEditForm(container.id)}
-                      className="font-bold text-lg text-gray-800 mb-3 z-0 hover:cursor-text"
-                    >
-                      {container.title}
-                    </h2>
-                  )}
-                </div>
-                <button
-                  className={
-                    isEditingContainer && container.id == selectedContainerId
-                      ? "hidden"
-                      : "text-red-700"
-                  }
-                  onClick={deleteContainer(container.id)}
-                >
-                  <XCircleIcon className="w-7 h-7" />
-                </button>
-              </div>
-
-              {/* This is the task container, where tasks should be dragged individually */}
-              <Container
-                key={container.id}
-                tasks={tasks}
-                container_id={container.id}
-                setTasks={setTask}
-                setActiveCard={setActiveCard}
-                activeCard={activeCard}
-                onDrop={onDrop}
-                setDraggableType={setDraggableType}
-                draggableType={draggableType}
-              />
-            </div>
-
-            <ContainerDropArea
-              onDrop={() => {
-                onDropContainer(index + 1);
-              }}
-              draggableType={draggableType}
-            />
-          </React.Fragment>
-        ))}
-
-        {/* Add New List Button */}
-        <div className="w-max bg-gray-200 shadow-md rounded-lg p-4 flex flex-col justify-center items-center w-60">
-          {showInput && (
-            <div className="mt-3 w-60">
-              <input
-                value={container_title}
-                onChange={(e) => setContainerTitle(e.target.value)}
-                type="text"
-                placeholder="New list"
-                className="input input-bordered w-full text-sm p-2 rounded-md z-50"
-              />
-              <div className="flex flex-wrap w-full">
-                <button
-                  className="btn btn-primary w-full mt-2 text-sm"
-                  onClick={() => saveContainer(null)}
-                >
-                  Add List
-                </button>
-                <button
-                  className="btn btn-error w-full mt-2 text-sm"
-                  onClick={() => setShowInput(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Show Input Button */}
-          {!showInput && (
-            <button
-              className="btn btn-primary w-60 mt-3 text-sm z-10"
-              onClick={() => setShowInput(true)}
-            >
-              + Add List
-            </button>
-          )}
-        </div>
+    <Layout>
+      <div>
+        <h1 className="font-bold text-gray-900 text-3xl mb-6 dark:text-gray-200">
+          Home
+        </h1>
+        Welcome to the home page
       </div>
-    </div>
+    </Layout>
   );
 }

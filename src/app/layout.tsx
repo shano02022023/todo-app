@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="h-screen bg-gray-100 dark:bg-gray-700 items-center justify-center">
-        <Layout children={children}/>
+        {children}
       </body>
     </html>
   );

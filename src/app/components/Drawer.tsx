@@ -5,6 +5,7 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/24/solid";
 import { useRef } from "react";
+import Link from "next/link";
 
 interface DrawerProps {
   title: String;
@@ -79,17 +80,19 @@ const Drawer = ({
       >
         <ul>
           <li className="dark:text-gray-900 text-gray-200 font-bold cursor-pointer">
-            <div>board 1</div>
+            <Link href="/board">
+              <div>board 1</div>
+            </Link>
           </li>
-          <li>
-            <div className="dark:text-gray-900 text-gray-200 font-bold">
-              board 2
-            </div>
+          <li className="dark:text-gray-900 text-gray-200 font-bold cursor-pointer">
+            <Link href="/board">
+              <div>board 2</div>
+            </Link>
           </li>
-          <li>
-            <div className="dark:text-gray-900 text-gray-200 font-bold">
-              board 3
-            </div>
+          <li className="dark:text-gray-900 text-gray-200 font-bold cursor-pointer">
+            <Link href="/board">
+              <div>board 3</div>
+            </Link>
           </li>
           <li>
             <div className="dark:text-gray-900 text-gray-200 font-bold">
