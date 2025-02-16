@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { ItemsProps } from "../types/items";
 import SingleTask from "./SingleTask";
 import DropArea from "./drop_area";
@@ -30,6 +30,7 @@ export default function Container({
   const [showSelectedTasksId, setShowSelectedTasksId] = useState<number | null>(
     null
   );
+  const [selectedTask, setSelectedTask] = useState<ItemsProps>();
 
   // const [isEditingContainer, setIsEditingContainer] = useState(false);
   // const [containerTitle, setContainerTitle] = useState(container.title);
@@ -75,8 +76,15 @@ export default function Container({
     }
   };
 
-  const deleteTasks = (task_id: number) => {
-    const updatedTasks = tasks.filter((task) => task.id !== task_id);
+  const taskModalRef = useRef<HTMLDialogElement | null>(null);
+
+  const openDeleteTaskModal = (id: number) => {
+    setSelectedTask(tasks.find((task) => task.id === id));
+    taskModalRef.current?.showModal();
+  };
+
+  const deleteTasks = () => {
+    const updatedTasks = tasks.filter((task) => task.id !== selectedTask?.id);
     setTasks(updatedTasks);
   };
 
@@ -146,34 +154,37 @@ export default function Container({
           }}
           draggableType={draggableType}
         />
-        {tasks.map((task, index) => container_id === task.container_id &&  (
-            <React.Fragment key={index}>
-              <SingleTask
-                activeCard={activeCard}
-                taskProps={task}
-                showSelectedTasksId={showSelectedTasksId}
-                saveTask={saveTask}
-                closeInputForm={closeInputForm}
-                addToFavorites={addToFavorites}
-                deleteTasks={deleteTasks}
-                showTaskOption={showTaskOption}
-                setActiveCard={setActiveCard}
-                draggableType={draggableType}
-                setDraggableType={setDraggableType}
-                taskTitle={taskTitle}
-                setTaskTitle={setTaskTitle}
-                taskDescription={taskDescription}
-                setTaskDescription={setTaskDescription}
-                index={index}
-              />
-              <DropArea
-                onDrop={() => {
-                  onDrop(container_id, index + 1);
-                }}
-                draggableType={draggableType}
-              />
-            </React.Fragment>
-          ))}
+        {tasks.map(
+          (task, index) =>
+            container_id === task.container_id && (
+              <React.Fragment key={index}>
+                <SingleTask
+                  activeCard={activeCard}
+                  taskProps={task}
+                  showSelectedTasksId={showSelectedTasksId}
+                  saveTask={saveTask}
+                  closeInputForm={closeInputForm}
+                  addToFavorites={addToFavorites}
+                  deleteTasks={openDeleteTaskModal}
+                  showTaskOption={showTaskOption}
+                  setActiveCard={setActiveCard}
+                  draggableType={draggableType}
+                  setDraggableType={setDraggableType}
+                  taskTitle={taskTitle}
+                  setTaskTitle={setTaskTitle}
+                  taskDescription={taskDescription}
+                  setTaskDescription={setTaskDescription}
+                  index={index}
+                />
+                <DropArea
+                  onDrop={() => {
+                    onDrop(container_id, index + 1);
+                  }}
+                  draggableType={draggableType}
+                />
+              </React.Fragment>
+            )
+        )}
       </ul>
 
       {/* Add Task Input - Hidden Initially */}
@@ -213,12 +224,32 @@ export default function Container({
       {/* Show Input Button */}
       {!showInput && !showSelectedTasksId && (
         <button
-          className="btn btn-outline btn-primary w-full mt-3 text-sm"
+          className="btn btn-outline btn-primary w-full mt-3 text-sm z-50"
           onClick={() => setShowInput(true)}
         >
           + Add Task
         </button>
       )}
+      <dialog ref={taskModalRef} id="my_modal_1" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Delete selected board</h3>
+          <p className="py-4">
+            Are you sure you want to delete this container "
+            {selectedTask?.title}"?
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <div className="flex flex-row gap-2">
+                {/* if there is a button in form, it will close the modal */}
+                <button className="btn btn-success" onClick={deleteTasks}>
+                  Delete
+                </button>
+                <button className="btn">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }
