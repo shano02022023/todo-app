@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 
 interface MenuItemProps {
@@ -8,11 +9,21 @@ interface MenuItemProps {
   activeRoute: string;
 }
 
-const MenuItem = ({ isCollapsed, title, children, route, activeRoute }: MenuItemProps) => {
+const MenuItem = ({
+  isCollapsed,
+  title,
+  children,
+  route,
+  activeRoute,
+}: MenuItemProps) => {
   return (
     <Link href={route}>
       <div className="p-2 border-5 flex flex-col">
-        <div className={`flex flex-row items-center justify-between gap-2 hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl`}>
+        <div
+          className={`flex flex-row items-center justify-between gap-2 hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl ${
+            activeRoute === route ? "bg-gray-200" : ""
+          }`}
+        >
           <div className="flex flex-row items-center">
             {children}
             <h1

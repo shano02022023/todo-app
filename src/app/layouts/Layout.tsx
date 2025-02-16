@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/solid";
 import Drawer from "../components/Drawer";
 import MenuItem from "../components/MenuItem";
+import { usePathname } from 'next/navigation';
 
 export default function Layout({
   children,
@@ -17,7 +18,7 @@ export default function Layout({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(true);
 
-  const currentRoute = window.location.pathname;
+  const activeRoute = usePathname();
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -47,7 +48,7 @@ export default function Layout({
           )}
         </button>
         <div className="flex flex-col pt-20">
-          <MenuItem title="Home" isCollapsed={isCollapsed} route="/" activeRoute={currentRoute}>
+          <MenuItem title="Home" isCollapsed={isCollapsed} route="/" activeRoute={activeRoute}>
             <HomeIcon className="w-10 h-10" />
           </MenuItem>
           <Drawer
@@ -56,13 +57,14 @@ export default function Layout({
             isCollapsed={isCollapsed}
             setIsDrawerCollapsed={setIsDrawerCollapsed}
             isDrawerCollapsed={isDrawerCollapsed}
+            activeRoute={activeRoute}
           />
-          <MenuItem title="About" isCollapsed={isCollapsed} route="/about" activeRoute={currentRoute}>
+          <MenuItem title="About" isCollapsed={isCollapsed} route="/about" activeRoute={activeRoute}>
             <InformationCircleIcon className="w-10 h-10" />
           </MenuItem>
         </div>
       </div>
-      <div className="p-7 h-screen w-9/12 flex-1">{children}</div>
+      <div className="p-7 h-screen w-9/12 flex-1 overflow-scroll">{children}</div>
     </div>
   );
 }

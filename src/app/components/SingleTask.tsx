@@ -46,8 +46,8 @@ export default function SingleTask({
     <li
       className={
         activeCard === taskProps.id
-          ? "hover:bg-gray-400 hover:p-3 hover:rounded-lg transition transition-all bg-gray-200 p-3 rounded-lg shadow-md hover:cursor-move transform scale-105"
-          : "hover:bg-gray-400 hover:p-3 hover:rounded-lg transition transition-all bg-gray-200 p-3 rounded-lg shadow-md hover:cursor-grab"
+          ? "hover:bg-gray-400 hover:p-3 hover:rounded-lg transition transition-all bg-gray-200 p-3 rounded-lg shadow-md hover:cursor-move transform scale-105 z-50"
+          : "hover:bg-gray-400 hover:p-3 hover:rounded-lg transition transition-all bg-gray-200 p-3 rounded-lg shadow-md hover:cursor-grab z-50"
       }
       draggable
       onDrag={() => {
