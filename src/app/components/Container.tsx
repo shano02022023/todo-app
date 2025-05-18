@@ -45,6 +45,7 @@ export default function Container({
       });
 
       setTasks(updatedTasks);
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } else {
       const newTask: ItemsProps = {
         id: tasks.length + 1,
@@ -55,6 +56,7 @@ export default function Container({
       };
 
       setTasks([...tasks, newTask]);
+      localStorage.setItem("tasks", JSON.stringify([...tasks, newTask]));
     }
 
     setTaskTitle("");
@@ -86,6 +88,7 @@ export default function Container({
   const deleteTasks = () => {
     const updatedTasks = tasks.filter((task) => task.id !== selectedTask?.id);
     setTasks(updatedTasks);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
   const closeInputForm = () => {
@@ -99,6 +102,15 @@ export default function Container({
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === id ? { ...task, isFavorite: !task.isFavorite } : task
+      )
+    );
+
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(
+        tasks.map((task) =>
+          task.id === id ? { ...task, isFavorite: !task.isFavorite } : task
+        )
       )
     );
   };

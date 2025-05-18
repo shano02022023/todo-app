@@ -5,7 +5,7 @@ import {
   PlusCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import boardsData from "../data/Boards.json";
 import { BoardsProps } from "../types/boards";
@@ -39,16 +39,24 @@ const Drawer = ({
   activeRoute,
 }: DrawerProps) => {
   const [selectedBoard, setSelectedBoard] = useState<BoardsProps>();
-  const [containers, setContainers] = useState<ContainerProps[]>(
-    localStorage.getItem("containers")
-      ? JSON.parse(localStorage.getItem("containers") as string)
-      : containersData
-  );
-  const [tasks, setTasks] = useState<ItemsProps[]>(
-    localStorage.getItem("tasks")
-      ? JSON.parse(localStorage.getItem("tasks") as string)
-      : tasksData
-  );
+  const [containers, setContainers] = useState<ContainerProps[]>([]);
+  const [tasks, setTasks] = useState<ItemsProps[]>([]);
+  const [boards, setBoards] = useState<BoardsProps[]>([]);
+  const [boardName, setBoardName] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedContainers = localStorage.getItem("containers");
+      const savedTasks = localStorage.getItem("tasks");
+      const savedBoards = localStorage.getItem("boards");
+
+      setContainers(
+        savedContainers ? JSON.parse(savedContainers) : containersData
+      );
+      setTasks(savedTasks ? JSON.parse(savedTasks) : tasksData);
+      setBoards(savedBoards ? JSON.parse(savedBoards) : boardsData);
+    }
+  }, []);
 
   const toggleDrawerCollapse = () => {
     if (isCollapsed && isDrawerCollapsed) {
@@ -71,14 +79,6 @@ const Drawer = ({
     setSelectedBoard(boards.find((board) => board.id === id));
     deleteteModalRef.current?.showModal();
   };
-
-  const [boards, setBoards] = useState<BoardsProps[]>(
-    localStorage.getItem("boards")
-      ? JSON.parse(localStorage.getItem("boards") as string)
-      : boardsData
-  );
-
-  const [boardName, setBoardName] = useState("");
 
   const saveBoard = () => {
     setBoards([...boards, { id: boards.length + 1, name: boardName }]);

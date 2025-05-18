@@ -39,28 +39,25 @@ const ViewBoard = ({ params }: ViewBoardProps) => {
   const [draggableType, setDraggableType] = useState<string | null>(null);
   const [selectedContainer, setSelectedContainer] = useState<ContainerProps>();
 
-  const [board, setBoard] = useState<BoardsProps[]>(
-    localStorage.getItem("boards")
-      ? JSON.parse(localStorage.getItem("boards") as string)
-      : boardsData
-  );
+  const [board, setBoard] = useState<BoardsProps[]>([]);
 
-  const [containers, setContainer] = useState<ContainerProps[]>(
-    localStorage.getItem("containers")
-      ? JSON.parse(localStorage.getItem("containers") as string)
-      : containerData
-  );
+  const [containers, setContainer] = useState<ContainerProps[]>([]);
 
-  const [tasks, setTask] = useState<ItemsProps[]>(
-    localStorage.getItem("tasks")
-      ? JSON.parse(localStorage.getItem("tasks") as string)
-      : taskData
-  );
+  const [tasks, setTask] = useState<ItemsProps[]>([]);
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    localStorage.setItem("containers", JSON.stringify(containers));
-  }, [tasks, containers]);
+    if (typeof window !== "undefined") {
+      const savedContainers = localStorage.getItem("containers");
+      const savedTasks = localStorage.getItem("tasks");
+      const savedBoards = localStorage.getItem("boards");
+
+      setContainer(
+        savedContainers ? JSON.parse(savedContainers) : containerData
+      );
+      setTask(savedTasks ? JSON.parse(savedTasks) : taskData);
+      setBoard(savedBoards ? JSON.parse(savedBoards) : boardsData);
+    }
+  }, []);
 
   const saveContainer = (container_id: number | null, board_id: number) => {
     if (container_id !== null && container_id !== 0) {
@@ -72,6 +69,7 @@ const ViewBoard = ({ params }: ViewBoardProps) => {
       );
 
       setContainer(updatedContainers);
+      localStorage.setItem("containers", JSON.stringify(updatedContainers));
     } else {
       // Add new container
       const maxId =
@@ -83,6 +81,10 @@ const ViewBoard = ({ params }: ViewBoardProps) => {
       };
 
       setContainer([...containers, newContainer]);
+      localStorage.setItem(
+        "containers",
+        JSON.stringify([...containers, newContainer])
+      );
     }
 
     setContainerTitle("");
@@ -185,6 +187,7 @@ const ViewBoard = ({ params }: ViewBoardProps) => {
     // Update the state with the reordered containers
     setTask(updatedTasks);
 
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     setActiveCard(null);
 
     console.log(updatedTasks);
@@ -215,6 +218,7 @@ const ViewBoard = ({ params }: ViewBoardProps) => {
     // Update the state with the reordered containers
     setContainer(updatedContainers);
 
+    localStorage.setItem("containers", JSON.stringify(updatedContainers));
     // Update the indices of tasks within the containers
     const updatedTasks = tasks.map((task) => {
       const newContainerIndex = updatedContainers.findIndex(
