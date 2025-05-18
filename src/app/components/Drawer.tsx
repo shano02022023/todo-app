@@ -7,12 +7,12 @@ import {
 } from "@heroicons/react/24/solid";
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import boardsData from "../data/Boards.json";
+import boardsData from "../Data/Boards.json";
 import { BoardsProps } from "../types/boards";
 import { ContainerProps } from "../types/container";
-import containersData from "../data/Containers.json";
+import containersData from "../Data/Containers.json";
 import { ItemsProps } from "../types/items";
-import tasksData from "../data/Tasks.json";
+import tasksData from "../Data/Tasks.json";
 import { redirect } from "next/navigation";
 
 interface DrawerProps {

@@ -8,9 +8,9 @@ import { ItemsProps } from "../../types/items";
 import { BoardsProps } from "../../types/boards";
 import ContainerDropArea from "../../components/container_drop_area";
 import Layout from "../../layouts/Layout";
-import taskData from "../../data/Tasks.json";
-import containerData from "../../data/Containers.json";
-import boardsData from "../../data/Boards.json";
+import taskData from "../../Data/Tasks.json";
+import containerData from "../../Data/Containers.json";
+import boardsData from "../../Data/Boards.json";
 
 interface ViewBoardProps {
   params: Promise<{ slug: string }>;
