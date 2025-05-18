@@ -20,8 +20,8 @@ const MenuItem = ({
     <Link href={route}>
       <div className="p-2 border-5 flex flex-col">
         <div
-          className={`flex flex-row items-center justify-between gap-2 hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl ${
-            activeRoute === route ? "bg-gray-200" : ""
+          className={`flex flex-row items-center justify-between gap-2 hover:bg-gray-400 dark:hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl ${
+            activeRoute === route ? "bg-gray-400 dark:text-gray-900 dark:bg-gray-200" : ""
           }`}
         >
           <div className="flex flex-row items-center">

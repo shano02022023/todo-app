@@ -146,7 +146,7 @@ const Drawer = ({
         onClick={() => {
           toggleDrawerCollapse();
         }}
-        className="flex flex-row items-center justify-between gap-2 hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl"
+        className="flex flex-row items-center justify-between gap-2 hover:bg-gray-400 dark:hover:bg-gray-200 p-2 transition-all duration-300 ease-in-out transition rounded-xl"
       >
         <div className="flex flex-row items-center">
           <ClipboardDocumentListIcon className="w-10 h-10" />
@@ -171,7 +171,7 @@ const Drawer = ({
         </div>
       </div>
       <div
-        className={`flex flex-row transition-all duration-300 ease-in-out transition px-6 rounded-lg bg-gray-200 ${
+        className={`flex flex-row transition-all duration-300 ease-in-out transition px-6 rounded-lg dark:bg-gray-200 bg-gray-300 ${
           isDrawerCollapsed ? "hidden" : ""
         }`}
       >
@@ -179,7 +179,7 @@ const Drawer = ({
           {boards.map((board) => (
             <li key={board.id}>
               <div
-                className={`flex flex-row items-center justify-between dark:text-gray-900 text-gray-200 font-bold cursor-pointer hover:bg-gray-400 rounded-xl px-2 w-full ${
+                className={`flex flex-row items-center justify-between dark:text-gray-900 text-gray-900 font-bold cursor-pointer hover:bg-gray-400 rounded-xl px-2 w-full ${
                   activeRoute === `/board/${board.id}` ? "bg-gray-500" : ""
                 }`}
               >
@@ -212,7 +212,7 @@ const Drawer = ({
             </Link>
           </li> */}
           <li>
-            <div className="dark:text-gray-900 text-gray-200 font-bold hover:bg-gray-400 rounded-xl px-2">
+            <div className="dark:text-gray-900 text-gray-900 font-bold hover:bg-gray-400 rounded-xl px-2">
               <button onClick={openModal}>
                 Add board <PlusCircleIcon className="w-5 h-5 inline-flex" />
               </button>
